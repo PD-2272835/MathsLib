@@ -127,11 +127,12 @@
     <ClInclude Include="cmathematics.hpp" />
     <ClInclude Include="constants.hpp" />
     <ClInclude Include="functions.hpp" />
+    <ClInclude Include="matrix.hpp" />
+    <ClInclude Include="quaternion.hpp" />
     <ClInclude Include="vec.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="vec.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

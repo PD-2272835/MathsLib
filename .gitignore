@@ -416,3 +416,6 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Downloading Repo should just be the headers
+CT5MathsLib/main.cpp

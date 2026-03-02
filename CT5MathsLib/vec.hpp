@@ -4,6 +4,7 @@
 #include "constants.hpp"
 #include <cmath>
 #include <cstddef>
+#include <string>
 
 
 
@@ -19,9 +20,13 @@ namespace mfg
 		constexpr std::size_t Dimension() const { return dim; }
 
 		T& x = values[0];
+
 		T& y = values[1];
+
 		T& z = values[2];
+
 		T& w = values[3];
+
 
 
 		vec()
@@ -65,21 +70,13 @@ namespace mfg
 			return *this;
 		}
 
-		//copy assignment operator for vectors of a different dimension
-		template<std::size_t D, typename type>
+		//copy assignment operator for vectors of a different dimension/type
+		template<std::size_t D, typename type, typename = std::enable_if_t<std::is_convertible<type, T>::value>>
 		vec& operator=(const vec<D, type> &other)
 		{
-			static_assert(std::is_same<type, T>::value, "Vector types are not the same, please use suitable conversion");
-
-			if (&other != this)
+			for (std::size_t i = 0; i < dim; ++i)
 			{
-				T temp[dim];
-				temp = { static_cast<T>(other.values) };
-
-				for (std::size_t i = 0; i < dim; ++i)
-				{
-					values[i] = temp[i];
-				}
+				values[i] = T(other.values[i]);
 			}
 
 			return *this;
@@ -185,8 +182,7 @@ namespace mfg
 		}
 
 		//Non-linear Vector Scaling
-		template<vec<dim, T> V>
-		vec& operator*=(const V& rhs)
+		vec& operator*=(const vec<dim, T> &rhs)
 		{
 			for (std::size_t i = 0; i < dim; ++i)
 			{
@@ -304,7 +300,7 @@ namespace mfg
 	template<typename T>
 	static vec<2, T> Vec2FromAngle(T angle, mfg::angleUnit angleType = mfg::Radians)
 	{
-		vec<dim, T> result;
+		vec<2, T> result;
 		if (angleType == mfg::Degrees)
 		{
 			angle = mfg::DegToRad(angle);
@@ -313,7 +309,6 @@ namespace mfg
 		result.y = std::sin(angle);
 		return result;
 	}
-
 
 	template<std::size_t dim> using highp_vec = vec<dim, long double>;
 	template<std::size_t dim> using medp_vec = vec<dim, double>;

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "constants.hpp"
+#include "vec.hpp"
+#include <string>
 
 namespace mfg
 {
@@ -19,5 +21,14 @@ namespace mfg
 		return value;
 	}
 
-
+	template<std::size_t dim, typename T>
+	static std::string VecToString(const mfg::vec<dim, T> &vector)
+	{
+		std::string res;
+		for (std::size_t i = 0; i < dim; ++i)
+		{
+			res += std::to_string(i) + " " + std::to_string(vector.values[i]) + " ";
+		}
+		return res;
+	}
 }

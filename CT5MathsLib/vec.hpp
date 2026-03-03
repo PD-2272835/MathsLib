@@ -94,28 +94,25 @@ namespace mfg
 		}
 
 		//Scalar addition
-		template<typename type>
+		template<typename type, typename = std::enable_if_t<std::is_convertible<type, T>::value>>
 		vec<dim, T>& operator+=(const type &rhs)
 		{
-			static_assert(std::is_same<type, T>::value, "Cannot perform arithmetic on incompatible types");
-
 			for (std::size_t i = 0; i < dim; ++i)
 			{
-				values[i] = values[i] + rhs;
+				values[i] = values[i] + T(rhs);
 			}
 
 			return *this;
 		}
 
-		//vector addition
-		template<std::size_t D, typename type>
+		//vector-vector per element addition (permits vectors of larger dimensions)
+		template<std::size_t D, typename type, 
+			typename = std::enable_if_t<std::is_convertible<type, T>::value && (D >= dim)>>
 		vec& operator+=(const vec<D, type> &rhs)
 		{
-			static_assert((rhs.Dimension() == dim) && (std::is_same<type, T>::value), "cannot perform arithmetic on incompatible vectors");
-
-			for (std::size_t i = 0; i < Dimension(); ++i)
+			for (std::size_t i = 0; i < dim; ++i)
 			{
-				values[i] = values[i] + rhs.values[i];
+				values[i] = values[i] + T(rhs.values[i]);
 			}
 			return *this;
 		}
@@ -132,27 +129,23 @@ namespace mfg
 		}
 
 		//Scalar subtraction
-		template<typename type>
+		template<typename type, typename = std::enable_if_t<std::is_convertible<type, T>::value>>
 		vec& operator-=(const type &rhs)
 		{
-			static_assert(std::is_same<type, T>::value, "Cannot perform arithmetic on incompatible types");
-
-			for (std::size_t i = 0; i < Dimension(); ++i)
+			for (std::size_t i = 0; i < dim; ++i)
 			{
-				values[i] = values[i] - rhs;
+				values[i] = values[i] - T(rhs);
 			}
 			return *this;
 		}
 
 		//Vector Substraction
-		template<std::size_t D, typename type>
+		template<std::size_t D, typename type, typename = std::enable_if_t<std::is_convertible<type, T>::value>>
 		vec& operator-=(const vec<D, type> &rhs)
 		{
-			static_assert(std::is_same<type, T>::value, "Cannot perform arithmetic on incompatible vectors");
-
-			for (std::size_t i = 0; i < Dimension(); ++i)
+			for (std::size_t i = 0; i < dim; ++i)
 			{
-				values[i] = values[i] - rhs.values[i];
+				values[i] = values[i] - T(rhs.values[i]);
 			}
 			return *this;
 		}
@@ -169,24 +162,24 @@ namespace mfg
 		}
 
 		//Vector Scaling (by scalar)
-		template<typename type>
+		template<typename type, typename = std::enable_if_t<std::is_convertible<type, T>::value>>
 		vec& operator*=(const type &rhs)
 		{
-			static_assert(std::is_same<type, T>::value, "Cannot perform arithmetic on incompatible types");
 
 			for (std::size_t i = 0; i < dim; ++i)
 			{
-				values[i] = values[i] * rhs;
+				values[i] = values[i] * T(rhs);
 			}
 			return *this;
 		}
 
 		//Non-linear Vector Scaling
-		vec& operator*=(const vec<dim, T> &rhs)
+		template<typename type, typename = std::enable_if_t<std::is_convertible<type, T>::value>>
+		vec& operator*=(const vec<dim, type> &rhs)
 		{
 			for (std::size_t i = 0; i < dim; ++i)
 			{
-				values[i] *= rhs.Values[i];
+				values[i] *= T(rhs.values[i]);
 			}
 			return *this;
 		}
@@ -196,23 +189,21 @@ namespace mfg
 
 		//generic division
 		template<typename type1, typename type2>
-		friend vec operator/(type1 lhs, const type2& rhs)
+		friend vec operator/(type1 lhs, const type2 &rhs)
 		{
 			lhs /= rhs;
 			return lhs;
 		}
 
 		//scalar division
-		template<typename type>
+		template<typename type, typename = std::enable_if_t<std::is_convertible<type, T>::value>>
 		vec& operator/=(const type& rhs)
 		{
-			static_assert(std::is_same<type, T>::value, "Cannot perform arithmetic on incompatible types");
-
 			if (rhs != 0)
 			{
-				for (std::size_t i = 0; i < Dimension(); ++i)
+				for (std::size_t i = 0; i < dim; ++i)
 				{
-					values[i] = values[i] / rhs;
+					values[i] = values[i] / T(rhs);
 				}
 			}
 			return *this;
@@ -221,7 +212,7 @@ namespace mfg
 
 
 
-
+		//get the magnitude of this vector
 		T Magnitude() const
 		{
 			T result = T();
@@ -233,6 +224,7 @@ namespace mfg
 			return result;
 		}
 
+		//normalize this vector
 		void Normalize() const
 		{
 			T mag = this->Magnitude();
@@ -241,14 +233,14 @@ namespace mfg
 
 	};
 
-
+	//static wrapper function for magnitude
 	template<std::size_t dim, typename T>
 	static T Magnitude(const vec<dim, T> &vector)
 	{
 		return vector.Magnitude();
 	}
 
-
+	//normalize provided vector to unit vector of same dimension and type
 	template<std::size_t dim, typename T>
 	static vec<dim, T> Normalize(const vec<dim, T> &vector)
 	{
@@ -257,7 +249,7 @@ namespace mfg
 		return result;
 	}
 
-	//Dot Product
+	//Dot Product between two vectors of the same size & type
 	template<std::size_t dim, typename T>
 	static T Dot(const vec<dim, T> &lhs, const vec<dim, T> &rhs)
 	{
@@ -289,15 +281,15 @@ namespace mfg
 	}
 
 
-	//angle between two vectors
+	//angle between two vectors of the same type + dimension
 	template<std::size_t dim, typename T>
-	static T Angle(const vec<dim, T>& a, const vec<dim, T>& b)
+	static T AngleBetween(const vec<dim, T>& a, const vec<dim, T>& b)
 	{
 		T angle = std::acos(mfg::Dot(a, b) / (mfg::Magnitude(a) * mfg::Magnitude(b))); //standard arccos - maybe replace?
 		return angle;
 	}
 
-	template<typename T>
+	template<typename T = float>
 	static vec<2, T> Vec2FromAngle(T angle, mfg::angleUnit angleType = mfg::Radians)
 	{
 		vec<2, T> result;

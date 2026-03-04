@@ -5,15 +5,15 @@
 
 namespace mfg
 {
-	template<std::size_t columns, std::size_t rows, typename T>
+	template<std::size_t rows, std::size_t columns, typename T>
 	struct mat
 	{
-		T values[col * rows];
+		T values[columns * rows];
 
 		constexpr std::size_t Columns() const { return columns; }
 		constexpr std::size_t Rows() const { return rows; }
 
-		//blank matrix
+		//create blank matrix
 		mat()
 		{
 			for (std::size_t i = 0; i < col * rows; ++i)
@@ -25,22 +25,51 @@ namespace mfg
 		//initialize along identity
 		mat(T val)
 		{
-			for(std::size_t i = 0; i < columns; ++i)
+			for (std::size_t i = 0; i < rows; ++i)
 			{
-				for (std::size_t j = 0; j < rows; ++i)
+				for(std::size_t j = 0; j < columns; ++j)
 				{
-					if (i == j)
-					{
-						values[i + j] = val;
-					}
-					else {
-						values[i + j] = T(0);
-					}
+					*this(i, j) = (i == j) ? val : T(0);
 				}
 			}
 		}
 
-		//
+
+		//accessing the matrix values by index (row then column)
+		//column is multiplied by rows as rows is the size of the stride between each element in a column
+		T& operator()(std::size_t row, std::size_t col) {
+			static_assert(row <= Rows && col <= Columns, "Trying to access an element out of this matrix's bounds");
+			return values[col * Rows + row];
+		}
+
+		const T& operator()(std::size_t row, std::size_t col) const {
+			static_assert(row <= Rows && col <= Columns, "Trying to access an element out of this matrix's bounds");
+			return values[col * Rows + row];
+		}
+
+		
+		//combining (mulitplying) matrices/vectors
+		//iterative algorithm: https://en.wikipedia.org/wiki/Matrix_multiplication_algorithm
+		template<std::size_t row, std::size_t col, typename type,
+			typename = std::enable_if_t<(Columns == row) && std::is_convertible<type, T>::value>>
+		mat& operator*(const mat<row, col, type> &rhs) const
+		{
+			mat<row, col, T> result;
+			
+			for (std::size_t i = 0; i < Rows; ++i)
+			{
+				for (std::size_t j = 0; j < col; ++j)
+				{
+					T sum = T(0);
+					for (std::size_t k = 0; k < Columns; ++k)
+					{
+						sum += (*this)(i, k) * T(rhs(k, j));
+					}
+					result(i, j) = sum;
+				}
+			}
+			return result;
+		}
 
 	};
 

@@ -48,7 +48,8 @@ namespace mfg
 		}
 
 		//construct vector with preset values that exactly match the dimension size
-		template<typename... Args, typename = std::enable_if_t<(sizeof...(Args) == dim)>>
+		template<typename... Args,
+			typename = std::enable_if_t<(sizeof...(Args) == dim)>>
 		vec(Args... args)
 		{
 			T temp[dim] = { static_cast<T>(args)... };
@@ -71,7 +72,8 @@ namespace mfg
 		}
 
 		//copy assignment operator for vectors of a different dimension/type
-		template<std::size_t D, typename type, typename = std::enable_if_t<std::is_convertible<type, T>::value>>
+		template<std::size_t D, typename type,
+			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
 		vec& operator=(const vec<D, type> &other)
 		{
 			for (std::size_t i = 0; i < dim; ++i)
@@ -94,7 +96,8 @@ namespace mfg
 		}
 
 		//Scalar addition
-		template<typename type, typename = std::enable_if_t<std::is_convertible<type, T>::value>>
+		template<typename type, 
+			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
 		vec<dim, T>& operator+=(const type &rhs)
 		{
 			for (std::size_t i = 0; i < dim; ++i)
@@ -129,7 +132,8 @@ namespace mfg
 		}
 
 		//Scalar subtraction
-		template<typename type, typename = std::enable_if_t<std::is_convertible<type, T>::value>>
+		template<typename type,
+			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
 		vec& operator-=(const type &rhs)
 		{
 			for (std::size_t i = 0; i < dim; ++i)
@@ -139,8 +143,9 @@ namespace mfg
 			return *this;
 		}
 
-		//Vector Substraction
-		template<std::size_t D, typename type, typename = std::enable_if_t<std::is_convertible<type, T>::value>>
+		//Vector-Vector per element subtraction
+		template<std::size_t D, typename type,
+			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
 		vec& operator-=(const vec<D, type> &rhs)
 		{
 			for (std::size_t i = 0; i < dim; ++i)
@@ -162,7 +167,8 @@ namespace mfg
 		}
 
 		//Vector Scaling (by scalar)
-		template<typename type, typename = std::enable_if_t<std::is_convertible<type, T>::value>>
+		template<typename type,
+			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
 		vec& operator*=(const type &rhs)
 		{
 
@@ -174,7 +180,8 @@ namespace mfg
 		}
 
 		//Non-linear Vector Scaling
-		template<typename type, typename = std::enable_if_t<std::is_convertible<type, T>::value>>
+		template<typename type,
+			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
 		vec& operator*=(const vec<dim, type> &rhs)
 		{
 			for (std::size_t i = 0; i < dim; ++i)
@@ -196,7 +203,8 @@ namespace mfg
 		}
 
 		//scalar division
-		template<typename type, typename = std::enable_if_t<std::is_convertible<type, T>::value>>
+		template<typename type,
+			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
 		vec& operator/=(const type& rhs)
 		{
 			if (rhs != 0)

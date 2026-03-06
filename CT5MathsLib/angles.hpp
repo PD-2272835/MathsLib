@@ -1,6 +1,10 @@
 #pragma once
 #include "constants.hpp"
 
+//NOTES: these static methods for angle conversion could probably be written better 
+//they only allow for the precision of a float, when a double can be used as an input argument
+//user (me) may desire higher precision when passing in a higher precision datatype
+
 namespace mfg
 {
 	enum angleUnit
@@ -31,10 +35,10 @@ namespace mfg
 		float result;
 		if (convertTo == mfg::Radians)
 		{
-			result = mfg::DegToRad(angle);
+			result = mfg::ToRadians(angle);
 		} else
 		{
-			result = mfg::RadToDeg(angle);
+			result = mfg::ToDegrees(angle);
 		}
 		return result;
 	}

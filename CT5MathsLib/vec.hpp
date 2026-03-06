@@ -1,10 +1,9 @@
 #pragma once
-#include "cmathematics.hpp"
 #include "angles.hpp"
 #include "constants.hpp"
+#include "matrix.hpp"
 #include <cmath>
-#include <cstddef>
-#include <string>
+#include <cstddef> //allows use of std::size_t
 
 
 
@@ -171,7 +170,6 @@ namespace mfg
 			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
 		vec& operator*=(const type &rhs)
 		{
-
 			for (std::size_t i = 0; i < dim; ++i)
 			{
 				values[i] = values[i] * T(rhs);
@@ -187,6 +185,25 @@ namespace mfg
 			for (std::size_t i = 0; i < dim; ++i)
 			{
 				values[i] *= T(rhs.values[i]);
+			}
+			return *this;
+		}
+
+		//matrix-vector multiplication 
+		//iterative algorithm: https://en.wikipedia.org/wiki/Matrix_multiplication
+		//this is actually awful to lay my eyes upon - I am anticipating problems with this method
+		template<typename type, std::size_t rows, std::size_t columns,
+			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
+		friend vec& operator*=(const mfg::mat<rows, columns, type> &lhs, vec &rhs)
+		{
+			T sum = T(0);
+			for (std::size_t i = 0; i < rows; ++i)
+			{
+				for (std::size_t j = 0; j < rows; ++j)
+				{
+					sum += mat(lhs)(i, j) * rhs.values[j];
+				}
+				this.values[i] = sum;
 			}
 			return *this;
 		}
@@ -303,7 +320,7 @@ namespace mfg
 		vec<2, T> result;
 		if (angleType == mfg::Degrees)
 		{
-			angle = mfg::DegToRad(angle);
+			angle = mfg::ToRadians(angle);
 		}
 		result.x = std::cos(angle);
 		result.y = std::sin(angle);

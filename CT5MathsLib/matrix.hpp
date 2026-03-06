@@ -8,7 +8,7 @@ namespace mfg
 	template<std::size_t rows, std::size_t columns, typename T>
 	struct mat
 	{
-		T values[columns * rows];
+		T values[rows*columns];
 
 		constexpr std::size_t Columns() const { return columns; }
 		constexpr std::size_t Rows() const { return rows; }
@@ -16,7 +16,7 @@ namespace mfg
 		//create blank matrix
 		mat()
 		{
-			for (std::size_t i = 0; i < col * rows; ++i)
+			for (std::size_t i = 0; i < columns * rows; ++i)
 			{
 				values[i] = T(0);
 			}
@@ -34,6 +34,17 @@ namespace mfg
 			}
 		}
 
+		//initialize entire matrix with a sequence of values
+		template<typename... Args,
+			typename = std::enable_if_t<(sizeof...(Args) == rows * columns)>>
+		mat(Args... args) //argument should be provided in column-major order
+		{
+			T temp[rows*columns] = { static_cast<T>(args)... };
+			for (std::size_t i = 0; i < rows*columns; ++i)
+			{
+				values[i] = temp[i];
+			}
+		}
 
 		//accessing the matrix values by index (row then column)
 		//column is multiplied by rows as rows is the size of the stride between each element in a column
@@ -46,9 +57,9 @@ namespace mfg
 			static_assert(row <= Rows && col <= Columns, "Trying to access an element out of this matrix's bounds");
 			return values[col * Rows + row];
 		}
-
 		
-		//combining (mulitplying) matrices/vectors
+
+		//combining matrices through multiplication
 		//iterative algorithm: https://en.wikipedia.org/wiki/Matrix_multiplication_algorithm
 		template<std::size_t row, std::size_t col, typename type,
 			typename = std::enable_if_t<(Columns == row) && std::is_convertible<type, T>::value>>
@@ -71,6 +82,8 @@ namespace mfg
 			return result;
 		}
 
+
+		
 	};
 
 	template<std::size_t col, std::size_t row> using highp_mat = mat<col, row, long double>;

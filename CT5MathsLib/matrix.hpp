@@ -1,10 +1,13 @@
 #pragma once
 
-#include "vec.hpp"
 #include "angles.hpp"
+#include "vec.hpp"
+
 
 namespace mfg
 {
+	//Matrices are expected in Column-Major order
+	
 	template<std::size_t rows, std::size_t columns, typename T>
 	struct mat
 	{
@@ -29,7 +32,7 @@ namespace mfg
 			{
 				for(std::size_t j = 0; j < columns; ++j)
 				{
-					*this(i, j) = (i == j) ? val : T(0);
+					(*this)(i, j) = (i == j) ? val : T(0);
 				}
 			}
 		}
@@ -46,35 +49,38 @@ namespace mfg
 			}
 		}
 
-		//accessing the matrix values by index (row then column)
-		//column is multiplied by rows as rows is the size of the stride between each element in a column
+
+		//functor for accessing the matrix values by index (row then column)
+		//column multiplied by rows - rows is the stride between each element in a column
 		T& operator()(std::size_t row, std::size_t col) {
-			static_assert(row <= Rows && col <= Columns, "Trying to access an element out of this matrix's bounds");
-			return values[col * Rows + row];
+			
+			if ((row < 0 || col < 0) || (row >= rows || col >= columns))
+			{
+				T r(0);
+				return r;
+			}
+			return this->values[(col * rows) + row];
 		}
 
-		const T& operator()(std::size_t row, std::size_t col) const {
-			static_assert(row <= Rows && col <= Columns, "Trying to access an element out of this matrix's bounds");
-			return values[col * Rows + row];
-		}
 		
 
 		//combining matrices through multiplication
 		//iterative algorithm: https://en.wikipedia.org/wiki/Matrix_multiplication_algorithm
-		template<std::size_t row, std::size_t col, typename type,
-			typename = std::enable_if_t<(Columns == row) && std::is_convertible<type, T>::value>>
-		mat& operator*(const mat<row, col, type> &rhs) const
+		//this is a const method as matrix multiplication can produce a resulting matrix of a different size
+		template<std::size_t R, std::size_t C, typename type,
+			typename = std::enable_if_t<(columns == R) && std::is_convertible<type, T>::value>>
+		mat<rows, C, T>& operator*(mat<R, C, type> &rhs) const
 		{
-			mat<row, col, T> result;
+			mat<rows, C, T> result;
 			
-			for (std::size_t i = 0; i < Rows; ++i)
+			for (std::size_t i = 0; i < rows; ++i)
 			{
-				for (std::size_t j = 0; j < col; ++j)
+				for (std::size_t j = 0; j < C; ++j)
 				{
 					T sum = T(0);
-					for (std::size_t k = 0; k < Columns; ++k)
+					for (std::size_t k = 0; k < columns; ++k)
 					{
-						sum += (*this)(i, k) * T(rhs(k, j));
+						sum += (*this)(i, k) * rhs(k, j);
 					}
 					result(i, j) = sum;
 				}
@@ -83,7 +89,7 @@ namespace mfg
 		}
 
 
-		
+
 	};
 
 	template<std::size_t col, std::size_t row> using highp_mat = mat<col, row, long double>;

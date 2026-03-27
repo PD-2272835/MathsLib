@@ -6,7 +6,6 @@
 #include <cstddef> //allows use of std::size_t
 
 
-
 //mfg should probably be renamed to something else (three letter abreviation) but for this module it should be fine
 namespace mfg
 {
@@ -17,15 +16,13 @@ namespace mfg
 		T values[dim];
 
 		constexpr std::size_t Dimension() const { return dim; }
-
+		
+		//terrible
+		
 		T& x = values[0];
-
 		T& y = values[1];
-
 		T& z = values[2];
-
 		T& w = values[3];
-
 
 
 		vec()
@@ -69,6 +66,7 @@ namespace mfg
 			}
 			return *this;
 		}
+
 
 		//copy assignment operator for vectors of a different dimension/type
 		template<std::size_t D, typename type,
@@ -157,9 +155,9 @@ namespace mfg
 
 
 
-		//generic multiplication
-		template<typename type1, typename type2>
-		friend vec operator*(type1 lhs, const type2 &rhs)
+		//allow compound multiplication/assignment
+		template<typename type1>
+		friend vec operator*(vec lhs, const type1 &rhs)
 		{
 			lhs *= rhs;
 			return lhs;
@@ -167,7 +165,8 @@ namespace mfg
 
 		//Vector Scaling (by scalar)
 		template<typename type,
-			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
+			typename = std::enable_if_t<std::is_convertible<type, T>::value &&
+			std::is_arithmetic_v<type>>>
 		vec& operator*=(const type &rhs)
 		{
 			for (std::size_t i = 0; i < dim; ++i)
@@ -180,7 +179,7 @@ namespace mfg
 		//Non-linear Vector Scaling
 		template<typename type,
 			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
-		vec& operator*=(const vec<dim, type> &rhs)
+		vec& operator*=(const vec<dim, type>&rhs)
 		{
 			for (std::size_t i = 0; i < dim; ++i)
 			{
@@ -189,23 +188,24 @@ namespace mfg
 			return *this;
 		}
 
-		//matrix-vector multiplication 
+		//vector by matrix multiplication 
 		//iterative algorithm: https://en.wikipedia.org/wiki/Matrix_multiplication
-		//this is actually awful to lay my eyes upon - I am anticipating problems with this method
-		template<typename type, std::size_t rows, std::size_t columns,
-			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
-		friend vec& operator*=(const mfg::mat<rows, columns, type> &lhs, vec &rhs)
+		//matrix is the lefthand symbol to preserve the order of matrix multiplication
+		template<typename type, std::size_t R, std::size_t C,
+			typename = std::enable_if_t<std::is_convertible<type, T>::value&& dim == R>>
+		friend vec& operator*(mat<R, C, type> &lhs, const vec<dim, T> &rhs)
 		{
-			T sum = T(0);
-			for (std::size_t i = 0; i < rows; ++i)
+			vec<dim, T> result;
+			for (std::size_t i = 0; i < dim; ++i)
 			{
-				for (std::size_t j = 0; j < rows; ++j)
+				T sum = T(0);
+				for (std::size_t j = 0; j < dim; ++j)
 				{
-					sum += mat(lhs)(i, j) * rhs.values[j];
+					sum += lhs(i, j) * rhs.values[j];
 				}
-				this.values[i] = sum;
+				result.values[i] = sum;
 			}
-			return *this;
+			return result;
 		}
 
 
@@ -222,9 +222,9 @@ namespace mfg
 		//scalar division
 		template<typename type,
 			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
-		vec& operator/=(const type& rhs)
+		vec& operator/=(const type &rhs)
 		{
-			if (rhs != 0)
+			if (rhs != T(0))
 			{
 				for (std::size_t i = 0; i < dim; ++i)
 				{

@@ -124,7 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="angles.hpp" />
-    <ClInclude Include="cmathematics.hpp" />
+    <ClInclude Include="mfg.hpp" />
     <ClInclude Include="constants.hpp" />
     <ClInclude Include="functions.hpp" />
     <ClInclude Include="matrix.hpp" />

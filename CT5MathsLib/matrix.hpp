@@ -1,5 +1,6 @@
-#pragma once
-
+#ifndef _MATRIX_HPP_
+#define _MATRIX_HPP_
+#include <iostream>
 #include "angles.hpp"
 #include "vec.hpp"
 
@@ -56,8 +57,8 @@ namespace mfg
 			
 			if ((row < 0 || col < 0) || (row >= rows || col >= columns))
 			{
-				T r(0);
-				return r;
+				std::cerr << "Trying to access matrix element outside of range, returned first element\nindex is: (" << row << "," << col << ") max allowed is: (" << rows-1 << "," << columns-1 << ")\n";
+				return this->values[0];
 			}
 			return this->values[(col * rows) + row];
 		}
@@ -100,3 +101,4 @@ namespace mfg
 	using mat3 = lowp_mat<3, 3>;
 	using mat2 = lowp_mat<2, 2>;
 }
+#endif

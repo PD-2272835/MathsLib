@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _FUNCTIONS_HPP_
+#define _FUCNTIONS_HPP_
 
 #include "constants.hpp"
 #include "vec.hpp"
@@ -32,3 +33,4 @@ namespace mfg
 		return res;
 	}
 }
+#endif

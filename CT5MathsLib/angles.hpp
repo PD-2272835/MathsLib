@@ -1,9 +1,10 @@
-#pragma once
+#ifndef _ANGLES_HPP_
+#define _ANGLES_HPP_
 #include "constants.hpp"
 
 //NOTES: these static methods for angle conversion could probably be written better 
 //they only allow for the precision of a float, when a double can be used as an input argument
-//user (me) may desire higher precision when passing in a higher precision datatype
+//user may desire higher precision return type
 
 namespace mfg
 {
@@ -43,3 +44,4 @@ namespace mfg
 		return result;
 	}
 }
+#endif

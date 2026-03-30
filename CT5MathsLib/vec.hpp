@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _VEC_HPP_
+#define _VEC_HPP_
 #include "angles.hpp"
 #include "constants.hpp"
 #include "matrix.hpp"
@@ -361,3 +362,4 @@ namespace mfg
 	using vec3 = lowp_vec<3>;
 	using vec4 = lowp_vec<4>;
 }
+#endif

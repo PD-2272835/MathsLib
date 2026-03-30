@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _MFG_HPP_
+#define _MFG_HPP_
 
 #include "constants.hpp"
 #include "functions.hpp"
@@ -11,3 +12,4 @@ namespace mfg
 {
 	//include this header to allow usage of all the above functionality of this MFG library
 }
+#endif

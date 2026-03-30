@@ -9,7 +9,6 @@
 //mfg should probably be renamed to something else (three letter abreviation) but for this module it should be fine
 namespace mfg
 {
-
 	template<std::size_t dim, typename T>
 	struct vec {
 
@@ -17,12 +16,27 @@ namespace mfg
 
 		constexpr std::size_t Dimension() const { return dim; }
 		
-		//terrible
-		
-		T& x = values[0];
-		T& y = values[1];
-		T& z = values[2];
-		T& w = values[3];
+		//slightly better xyzw accessors - this assumes 
+		template <typename = std::enable_if_t<(dim > 0)>>
+		T& x() { return (*this)[0]; }
+		template <typename = std::enable_if_t<(dim > 0)>>
+		const T& x() const { return (*this)[0]; }
+
+		template <typename = std::enable_if_t<(dim > 1)>>
+		T& y() { return (*this)[1]; }
+		template <typename = std::enable_if_t<(dim > 1)>>
+		const T& y() const { return (*this)[1]; }
+
+		template <typename = std::enable_if_t<(dim > 2)>>
+		T& z() { return (*this)[2]; }
+		template <typename = std::enable_if_t<(dim > 2)>>
+		const T& z() const { return (*this)[2]; }
+
+		template <typename = std::enable_if_t<(dim > 3)>>
+		T& w() { return (*this)[3]; }
+		template <typename = std::enable_if_t<(dim > 3)>>
+		const T& w() const { return (*this)[3]; }
+
 
 
 		vec()
@@ -53,6 +67,18 @@ namespace mfg
 			{
 				values[i] = temp[i];
 			}
+		}
+
+
+		//allow this type to be read as continuous memory
+		T& operator[](std::size_t i)
+		{
+			return values[i];
+		}
+
+		const T& operator[](std::size_t i) const
+		{
+			return values[i];
 		}
 
 		vec& operator=(const vec<dim, T> &other)
@@ -192,8 +218,8 @@ namespace mfg
 		//iterative algorithm: https://en.wikipedia.org/wiki/Matrix_multiplication
 		//matrix is the lefthand symbol to preserve the order of matrix multiplication
 		template<typename type, std::size_t R, std::size_t C,
-			typename = std::enable_if_t<std::is_convertible<type, T>::value&& dim == R>>
-		friend vec& operator*(mat<R, C, type> &lhs, const vec<dim, T> &rhs)
+			typename = std::enable_if_t<std::is_convertible<type, T>::value && dim == R>>
+		friend vec operator*( mat<R, C, type> &lhs, const vec<dim, T> &rhs)
 		{
 			vec<dim, T> result;
 			for (std::size_t i = 0; i < dim; ++i)
@@ -290,9 +316,9 @@ namespace mfg
 	static vec<dim, T> Cross(const vec<dim, T> &a, const vec<dim, T> &b)
 	{
 		vec<dim, T> result;
-		result.x = (a.y * b.z) - (a.z * b.y);
-		result.y = (a.z * b.x) - (a.x * b.z); 
-		result.z = (a.x * b.y) - (a.y * b.x);
+		result.x() = (a.y() * b.z()) - (a.z() * b.y());
+		result.y() = (a.z() * b.x()) - (a.x() * b.z());
+		result.z() = (a.x() * b.y()) - (a.y() * b.x());
 		return result;
 	}
 

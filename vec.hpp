@@ -17,7 +17,7 @@ namespace mfg
 
 		constexpr std::size_t Dimension() const { return dim; }
 		
-		//slightly better xyzw accessors - this assumes 
+		//slightly better xyzw accessors
 		template <typename = std::enable_if_t<(dim > 0)>>
 		T& x() { return (*this)[0]; }
 		template <typename = std::enable_if_t<(dim > 0)>>

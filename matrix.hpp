@@ -63,6 +63,16 @@ namespace mfg
 			return this->values[(col * rows) + row];
 		}
 
+		//allow this type to be read as continuous memory
+		T& operator[](std::size_t index)
+		{
+			if (index < 0 || index > (rows * columns)-1)
+			{
+				return this->values[0];
+			}
+			return this->values[index];
+		}
+
 		
 
 		//combining matrices through multiplication

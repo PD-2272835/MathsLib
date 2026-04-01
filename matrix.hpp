@@ -7,8 +7,10 @@
 
 namespace mfg
 {
+	//forward declare vector
+	template<std::size_t dim, typename T> struct vec;
+
 	//Matrices are expected in Column-Major order
-	
 	template<std::size_t rows, std::size_t columns, typename T>
 	struct mat
 	{
@@ -26,7 +28,7 @@ namespace mfg
 			}
 		}
 
-		//initialize along identity
+		//initialize along identity INCLUDES HOMOGENOUS COORDINATE
 		mat(T val)
 		{
 			for (std::size_t i = 0; i < rows; ++i)
@@ -78,9 +80,9 @@ namespace mfg
 		//combining matrices through multiplication
 		//iterative algorithm: https://en.wikipedia.org/wiki/Matrix_multiplication_algorithm
 		//this is a const method as matrix multiplication can produce a resulting matrix of a different size
-		template<std::size_t R, std::size_t C, typename type,
-			typename = std::enable_if_t<(columns == R) && std::is_convertible<type, T>::value>>
-		mat<rows, C, T>& operator*(mat<R, C, type> &rhs) const
+		template<std::size_t C, typename type,
+			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
+		mat<rows, C, T>& operator*(mat<columns, C, type> &rhs) const
 		{
 			mat<rows, C, T> result;
 			
@@ -100,8 +102,38 @@ namespace mfg
 		}
 
 
+		//Identity Matrix - Only use for matrix assignment/initialization
+		static mat Identity()
+		{
+			return mat(1.f);
+		}
+
 
 	};
+
+	//Pack a Translation Matrix
+	template <typename T>
+	mat<4, 4, T> Translate(const vec<3, T> &vector)
+	{
+		mat<4, 4, T> r(1.f);
+		r[12] = vector[0];
+		r[13] = vector[1];
+		r[14] = vector[2];
+		return r;
+	}
+
+	//Pack a Scale Matrix
+	template<typename T>
+	static mat<4, 4, T> Scale(const vec<3, T>& vector)
+	{
+		mat<4, 4, T> r(1.f);
+		r[0] = vector[0];
+		r[5] = vector[1];
+		r[10] = vector[2];
+		return r;
+	}
+
+
 
 	template<std::size_t col, std::size_t row> using highp_mat = mat<col, row, long double>;
 	template<std::size_t col, std::size_t row> using medp_mat = mat<col, row, double>;

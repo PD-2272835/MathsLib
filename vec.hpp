@@ -3,7 +3,6 @@
 #include "angles.hpp"
 #include "constants.hpp"
 #include "matrix.hpp"
-#include <cmath>
 #include <cstddef> //allows use of std::size_t
 
 
@@ -276,10 +275,10 @@ namespace mfg
 		}
 
 		//normalize this vector
-		void Normalize() const
+		void Normalize()
 		{
 			T mag = this->Magnitude();
-			this = this / mag;
+			*this = *this / mag;
 		}
 
 	};
@@ -348,8 +347,8 @@ namespace mfg
 		{
 			angle = mfg::ToRadians(angle);
 		}
-		result.x = std::cos(angle);
-		result.y = std::sin(angle);
+		result[0] = std::cos(angle);
+		result[1] = std::sin(angle);
 		return result;
 	}
 

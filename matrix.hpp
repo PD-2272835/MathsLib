@@ -133,6 +133,37 @@ namespace mfg
 		return r;
 	}
 
+	//Create an arbitrary Rotation Matrix from Axis-Angle
+	//using arbitrary matrix shown in learnopengl.com https://learnopengl.com/Getting-started/Transformations
+	template<typename T>
+	static mat<4, 4, T> Rotate(T angle, vec<3, T> axis)
+	{
+		axis.Normalize();
+		T c = std::cos(angle);
+		T s = std::sin(angle);
+		T oneMinus = 1 - c;
+		mat<4, 4, T> r;
+
+		//right
+		r[0] = c + (axis[0] * axis[0]) * oneMinus;
+		r[1] = axis[1] * axis[0] * oneMinus + (axis[2] * s);
+		r[2] = axis[2] * axis[0] * oneMinus - (axis[1] * s);
+		
+		//up
+		r[4] = axis[0] * axis[1] * oneMinus - (axis[2] * s);
+		r[5] = c + (axis[1] * axis[1]) * oneMinus;
+		r[6] = axis[2] * axis[1] * oneMinus + (axis[0] * s);
+				
+		//front (z)
+		r[8] = axis[0] * axis[2] * oneMinus + (axis[1] * s);
+		r[9] = axis[1] * axis[2] * oneMinus - (axis[0] * s);
+		r[10] = c + (axis[2] * axis[2]) * oneMinus;
+
+		r[15] = 1;
+
+		return r;
+	}
+
 
 
 	template<std::size_t col, std::size_t row> using highp_mat = mat<col, row, long double>;

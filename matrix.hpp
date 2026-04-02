@@ -62,7 +62,7 @@ namespace mfg
 				std::cerr << "Trying to access matrix element outside of range, returned first element\nindex is: (" << row << "," << col << ") max allowed is: (" << rows-1 << "," << columns-1 << ")\n";
 				return this->values[0];
 			}
-			return this->values[(col * rows) + row];
+			return this->values[(col*rows) + row];
 		}
 
 		//allow this type to be read as continuous memory
@@ -161,6 +161,49 @@ namespace mfg
 
 		r[15] = 1;
 
+		return r;
+	}
+
+	//Create A View Matrix
+	template<typename T>
+	static mat<4, 4, T> View(const vec<3,T> &right, const vec<3,T> &up, const vec<3,T> &front, const vec<3,T> &position = {0.f, 0.f, 0.f})
+	{
+		mat<4, 4, T> r;
+
+		r[0] = right[0];
+		r[1] = right[1];
+		r[2] = right[2];
+		
+		r[4] = up[0];
+		r[5] = up[1];
+		r[6] = up[2];
+		
+		r[8] = front[0];
+		r[9] = front[1];
+		r[10] = front[2];
+		
+		r[12] = position[0];
+		r[13] = position[1];
+		r[14] = position[2];
+		
+		r[15] = 1;
+		return r;
+	}
+
+
+	//https://stackoverflow.com/questions/8115352/glmperspective-explanation
+	//Create a Perspective Matrix
+	template<typename T>
+	static mat<4, 4, T> Perspective(T viewAngle, T aspectRatio, T nearClip, T farClip)
+	{
+		mat<4, 4, T> r;
+		T tanHalfAngle = std::tan(viewAngle / 2);
+
+		r[0] = 1 / (aspectRatio * tanHalfAngle);
+		r[5] = 1 / tanHalfAngle;
+		r[10] = -(farClip + nearClip) / (farClip - nearClip);
+		r[11] = -(2 * farClip * nearClip) / (farClip - nearClip);
+		r[14] = -1;
 		return r;
 	}
 

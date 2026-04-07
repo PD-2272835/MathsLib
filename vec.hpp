@@ -3,7 +3,6 @@
 #include "angles.hpp"
 #include "constants.hpp"
 #include "matrix.hpp"
-#include <cmath>
 #include <cstddef> //allows use of std::size_t
 
 
@@ -218,9 +217,9 @@ namespace mfg
 		//vector by matrix multiplication 
 		//iterative algorithm: https://en.wikipedia.org/wiki/Matrix_multiplication
 		//matrix is the lefthand symbol to preserve the order of matrix multiplication
-		template<typename type, std::size_t R, std::size_t C,
-			typename = std::enable_if_t<std::is_convertible<type, T>::value && dim == R>>
-		friend vec operator*( mat<R, C, type> &lhs, const vec<dim, T> &rhs)
+		template<typename type, std::size_t C,
+			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
+		friend vec operator*( mat<dim, C, type> &lhs, const vec<dim, T> &rhs)
 		{
 			vec<dim, T> result;
 			for (std::size_t i = 0; i < dim; ++i)
@@ -234,7 +233,6 @@ namespace mfg
 			}
 			return result;
 		}
-
 
 
 
@@ -277,10 +275,10 @@ namespace mfg
 		}
 
 		//normalize this vector
-		void Normalize() const
+		void Normalize()
 		{
 			T mag = this->Magnitude();
-			this = this / mag;
+			*this = *this / mag;
 		}
 
 	};
@@ -349,8 +347,8 @@ namespace mfg
 		{
 			angle = mfg::ToRadians(angle);
 		}
-		result.x = std::cos(angle);
-		result.y = std::sin(angle);
+		result[0] = std::cos(angle);
+		result[1] = std::sin(angle);
 		return result;
 	}
 

@@ -1,6 +1,8 @@
 #ifndef _ANGLES_HPP_
 #define _ANGLES_HPP_
 #include "constants.hpp"
+#include <type_traits>
+#include <cmath> //sin/cos/acos/atan
 
 //NOTES: these static methods for angle conversion could probably be written better 
 //they only allow for the precision of a float, when a double can be used as an input argument

@@ -1,5 +1,5 @@
 #ifndef _QUATERNION_HPP_
-#define _QUATNION_HPP_
+#define _QUATERNION_HPP_
 #include "angles.hpp"
 #include "vec.hpp"
 

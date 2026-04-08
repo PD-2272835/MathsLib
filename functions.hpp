@@ -1,5 +1,5 @@
 #ifndef _FUNCTIONS_HPP_
-#define _FUCNTIONS_HPP_
+#define _FUNCTIONS_HPP_
 
 #include "constants.hpp"
 #include "vec.hpp"

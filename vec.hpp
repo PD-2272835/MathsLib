@@ -17,24 +17,24 @@ namespace mfg
 		constexpr std::size_t Dimension() const { return dim; }
 		
 		//slightly better xyzw accessors
-		template <typename = std::enable_if_t<(dim > 0)>>
+		template <typename = typename std::enable_if_t<(dim > 0)>>
 		T& x() { return (*this)[0]; }
-		template <typename = std::enable_if_t<(dim > 0)>>
+		template <typename = typename std::enable_if_t<(dim > 0)>>
 		const T& x() const { return (*this)[0]; }
 
-		template <typename = std::enable_if_t<(dim > 1)>>
-		T& y() { return (*this)[1]; }
-		template <typename = std::enable_if_t<(dim > 1)>>
-		const T& y() const { return (*this)[1]; }
+		template <typename = typename std::enable_if_t<(dim > 1)>>
+			T& y() { return (*this)[1]; }
+		template <typename = typename std::enable_if_t<(dim > 1)>>
+			const T& y() const { return (*this)[1]; }
 
-		template <typename = std::enable_if_t<(dim > 2)>>
-		T& z() { return (*this)[2]; }
-		template <typename = std::enable_if_t<(dim > 2)>>
-		const T& z() const { return (*this)[2]; }
+		template <typename = typename std::enable_if_t<(dim > 2)>>
+			T& z() { return (*this)[2]; }
+		template <typename = typename  std::enable_if_t<(dim > 2)>>
+			const T& z() const { return (*this)[2]; }
 
-		template <typename = std::enable_if_t<(dim > 3)>>
-		T& w() { return (*this)[3]; }
-		template <typename = std::enable_if_t<(dim > 3)>>
+		template <typename = typename std::enable_if_t<(dim > 3)>>
+			T& w() { return (*this)[3]; }
+		template <typename = typename std::enable_if_t<(dim > 3)>>
 		const T& w() const { return (*this)[3]; }
 
 

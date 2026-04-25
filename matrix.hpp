@@ -52,6 +52,15 @@ namespace mfg
 			}
 		}
 
+		//allow this type to be read as continuous memory
+		T& operator[](std::size_t index)
+		{
+			if (index < 0 || index > (rows * columns)-1)
+			{
+				return this->values[0];
+			}
+			return this->values[index];
+		}
 
 		//functor for accessing the matrix values by index (row then column)
 		//column multiplied by rows - rows is the stride between each element in a column
@@ -65,15 +74,7 @@ namespace mfg
 			return this->values[(col*rows) + row];
 		}
 
-		//allow this type to be read as continuous memory
-		T& operator[](std::size_t index)
-		{
-			if (index < 0 || index > (rows * columns)-1)
-			{
-				return this->values[0];
-			}
-			return this->values[index];
-		}
+
 
 		
 
@@ -82,7 +83,7 @@ namespace mfg
 		//this is a const method as matrix multiplication can produce a resulting matrix of a different size
 		template<std::size_t C, typename type,
 			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
-		mat<rows, C, T>& operator*(mat<columns, C, type> &rhs) const
+		mat<rows, C, T>& operator*(const mat<columns, C, type> &rhs)
 		{
 			mat<rows, C, T> result;
 			
@@ -110,6 +111,26 @@ namespace mfg
 
 
 	};
+
+	template<std::size_t R, std::size_t C, typename T>
+	static mat<R, C, T>& mul(mat<R, C, T> &lhs, mat<R, C, T> &rhs)
+	{
+		mat<R, C, T> result;
+
+		for (std::size_t i = 0; i < R; ++i)
+		{
+			for (std::size_t j = 0; j < C; ++j)
+			{
+				T sum = T(0);
+				for (std::size_t k = 0; k < C; ++k)
+				{
+					sum += T(lhs[(j * R) + i]) * T(rhs[(k * R) + i]);
+				}
+				result(i, j) = sum;
+			}
+		}
+		return result;
+	}
 
 	//Pack a Translation Matrix
 	template <typename T>

@@ -83,7 +83,7 @@ namespace mfg
 		//this is a const method as matrix multiplication can produce a resulting matrix of a different size
 		template<std::size_t C, typename type,
 			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
-		mat<rows, C, T>& operator*(const mat<columns, C, type> &rhs)
+		mat<rows, C, T> operator*(const mat<columns, C, type> &rhs)
 		{
 			mat<rows, C, T> result;
 			
@@ -113,7 +113,7 @@ namespace mfg
 	};
 
 	template<std::size_t R, std::size_t C, typename T>
-	static mat<R, C, T>& mul(mat<R, C, T> &lhs, mat<R, C, T> &rhs)
+	static mat<R, C, T> mul(mat<R, C, T> &lhs, mat<R, C, T> &rhs)
 	{
 		mat<R, C, T> result;
 

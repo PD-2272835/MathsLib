@@ -23,17 +23,17 @@ namespace mfg
 		const T& x() const { return (*this)[0]; }
 
 		template <typename = typename std::enable_if<(dim > 1)>>
-			T& y() { return (*this)[1]; }
+		T& y() { return (*this)[1]; }
 		template <typename = typename std::enable_if<(dim > 1)>>
-			const T& y() const { return (*this)[1]; }
+		const T& y() const { return (*this)[1]; }
 
 		template <typename = typename std::enable_if<(dim > 2)>>
-			T& z() { return (*this)[2]; }
+		T& z() { return (*this)[2]; }
 		template <typename = typename  std::enable_if<(dim > 2)>>
-			const T& z() const { return (*this)[2]; }
+		const T& z() const { return (*this)[2]; }
 
 		template <typename = typename std::enable_if<(dim > 3)>>
-			T& w() { return (*this)[3]; }
+		T& w() { return (*this)[3]; }
 		template <typename = typename std::enable_if<(dim > 3)>>
 		const T& w() const { return (*this)[3]; }
 
@@ -274,11 +274,38 @@ namespace mfg
 			return result;
 		}
 
-		//normalize this vector
-		void Normalize()
+		//get the square magnitude of this vector
+		T SqrMagnitude() const
+		{
+			T result = T();
+			for (std::size_t i = 0; i < dim; ++i)
+			{
+				result += values[i] * values[i];
+			}
+			return result;
+		}
+
+
+		//Normalize this vector
+		vec& Normalize()
 		{
 			T mag = this->Magnitude();
 			*this = *this / mag;
+			return *this;
+		}
+
+
+		//get the sqr distance from this vector to another vector
+		T SqrDistance(const vec<dim, T>& other)
+		{
+			vec<dim, T> res = *this - other;
+			return res.SqrMagnitude();
+		}
+
+		//get the distance from this vector to another vector
+		T Distance(const vec<dim, T>& other)
+		{
+			return std::sqrt(*this->SqrDistance());
 		}
 
 	};

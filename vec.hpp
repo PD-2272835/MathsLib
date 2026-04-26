@@ -358,6 +358,37 @@ namespace mfg
 	}
 
 
+	//returns a vector with elements composed of the max between elements of a & b
+	//eg: a = {1, 2, 3}
+	//	  b = {3, 2, 1}
+	//:. Max(a, b) = {3, 2, 3}
+	template<std::size_t dim, typename T>
+	static vec<dim, T> Max(const vec<dim, T>& a, const vec<dim, T>& b)
+	{
+		vec<dim, T> res;
+		for (std::size_t i = 0; i < dim; ++i)
+		{
+			res[i] = Max(a[i], b[i]);
+		}
+		return res;
+	}
+
+	//returns a vector with elements composed of the min between elements of a & b
+	//eg: a = {1, 2, 3}
+	//	  b = {3, 2, 1}
+	//:. Max(a, b) = {1, 2, 1}
+	template<std::size_t dim, typename T>
+	static vec<dim, T> Min(const vec<dim, T>& a, const vec<dim, T>& b)
+	{
+		vec<dim, T> res;
+		for (std::size_t i = 0; i < dim; ++i)
+		{
+			res[i] = Min(a[i], b[i]);
+		}
+		return res;
+	}
+
+
 	//angle between two vectors of the same type + dimension
 	template<std::size_t dim, typename T>
 	static T AngleBetween(const vec<dim, T>& a, const vec<dim, T>& b)

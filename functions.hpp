@@ -63,7 +63,7 @@ namespace mfg
 	//NOTE: returns b if values are the same
 	template<typename T,
 		std::enable_if_t<std::is_arithmetic<T>::value>>
-		static T Min(T& a, T& b)
+	static T Min(T& a, T& b)
 	{
 		return (a < b) ? a : b;
 	}
@@ -72,7 +72,7 @@ namespace mfg
 	//NOTE: returns b if values are the same
 	template<typename T,
 		std::enable_if_t<std::is_arithmetic<T>::value>>
-		static T Max(T& a, T& b)
+	static T Max(T& a, T& b)
 	{
 		return (a > b) ? a : b;
 	}

@@ -62,8 +62,8 @@ namespace mfg
 	//return lowest value from a or b
 	//NOTE: returns b if values are the same
 	template<typename T,
-		std::enable_if_t<std::is_arithmetic<T>::value>>
-	static T Min(T& a, T& b)
+		std::enable_if_t<std::is_arithmetic<T>::value, bool> = true>
+	T Min(const T& a, const T& b)
 	{
 		return (a < b) ? a : b;
 	}
@@ -71,8 +71,8 @@ namespace mfg
 	//return highest value from a or b
 	//NOTE: returns b if values are the same
 	template<typename T,
-		std::enable_if_t<std::is_arithmetic<T>::value>>
-	static T Max(T& a, T& b)
+		std::enable_if_t<std::is_arithmetic<T>::value, bool> = true>
+	T Max(const T& a, const T& b)
 	{
 		return (a > b) ? a : b;
 	}

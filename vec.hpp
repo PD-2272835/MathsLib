@@ -312,14 +312,14 @@ namespace mfg
 
 	//static wrapper function for magnitude
 	template<std::size_t dim, typename T>
-	static T Magnitude(const vec<dim, T> &vector)
+	T Magnitude(const vec<dim, T> &vector)
 	{
 		return vector.Magnitude();
 	}
 
 	//normalize provided vector to unit vector of same dimension and type
 	template<std::size_t dim, typename T>
-	static vec<dim, T> Normalize(const vec<dim, T> &vector)
+	vec<dim, T> Normalize(const vec<dim, T> &vector)
 	{
 		T mag = mfg::Magnitude(vector);
 		vec<dim, T> result = vector / mag;
@@ -328,7 +328,7 @@ namespace mfg
 
 	//Dot Product between two vectors of the same size & type
 	template<std::size_t dim, typename T>
-	static T Dot(const vec<dim, T> &lhs, const vec<dim, T> &rhs)
+	T Dot(const vec<dim, T> &lhs, const vec<dim, T> &rhs)
 	{
 		T result = T();
 		for (std::size_t i = 0; i < dim; ++i)
@@ -339,7 +339,7 @@ namespace mfg
 	}
 
 	template<std::size_t dim, typename T, typename std::enable_if_t<dim == 3, int> = 0>
-	static vec<dim, T> Cross(const vec<dim, T> &a, const vec<dim, T> &b)
+	vec<dim, T> Cross(const vec<dim, T> &a, const vec<dim, T> &b)
 	{
 		vec<dim, T> result;
 		result.x() = (a.y() * b.z()) - (a.z() * b.y());
@@ -351,9 +351,23 @@ namespace mfg
 	
 
 	template<std::size_t dim, typename T>
-	static T Distance(vec<dim, T>& a, vec<dim, T>& b)
+	T Distance(const vec<dim, T>& a, const vec<dim, T>& b)
 	{
 		T result = mfg::Magnitude(a - b);
+		return result;
+	}
+
+	template<std::size_t dim, typename T>
+	T SqrDistance(const vec<dim, T>& a, const vec<dim, T>& b)
+	{
+		T result = a.SqrDistance(b);
+		return result;
+	}
+
+	template<std::size_t dim, typename T>
+	vec<dim, T> MidPoint(const vec<dim, T>& a, const vec<dim, T>& b)
+	{
+		vec<dim,T> result = (a + b) / 2;
 		return result;
 	}
 
@@ -361,14 +375,14 @@ namespace mfg
 	//returns a vector with elements composed of the max between elements of a & b
 	//eg: a = {1, 2, 3}
 	//	  b = {3, 2, 1}
-	//:. Max(a, b) = {3, 2, 3}
+	//Max(a, b) = {3, 2, 3}
 	template<std::size_t dim, typename T>
-	static vec<dim, T> Max(const vec<dim, T>& a, const vec<dim, T>& b)
+	vec<dim, T> Max(const vec<dim, T>& a, const vec<dim, T>& b)
 	{
 		vec<dim, T> res;
 		for (std::size_t i = 0; i < dim; ++i)
 		{
-			res[i] = Max(a[i], b[i]);
+			res[i] = (a[i] > b[i]) ? a[i] : b[i]; //FIXME - should use mfg::Max
 		}
 		return res;
 	}
@@ -376,14 +390,14 @@ namespace mfg
 	//returns a vector with elements composed of the min between elements of a & b
 	//eg: a = {1, 2, 3}
 	//	  b = {3, 2, 1}
-	//:. Max(a, b) = {1, 2, 1}
+	//Max(a, b) = {1, 2, 1}
 	template<std::size_t dim, typename T>
-	static vec<dim, T> Min(const vec<dim, T>& a, const vec<dim, T>& b)
+	vec<dim, T> Min(const vec<dim, T>& a, const vec<dim, T>& b)
 	{
 		vec<dim, T> res;
 		for (std::size_t i = 0; i < dim; ++i)
 		{
-			res[i] = Min(a[i], b[i]);
+			res[i] = (a[i] < b[i]) ? a[i] : b[i]; //FIXME - should use mfg::Min
 		}
 		return res;
 	}
@@ -391,14 +405,14 @@ namespace mfg
 
 	//angle between two vectors of the same type + dimension
 	template<std::size_t dim, typename T>
-	static T AngleBetween(const vec<dim, T>& a, const vec<dim, T>& b)
+	T AngleBetween(const vec<dim, T>& a, const vec<dim, T>& b)
 	{
 		T angle = std::acos(mfg::Dot(a, b) / (mfg::Magnitude(a) * mfg::Magnitude(b))); //standard arccos - maybe replace?
 		return angle;
 	}
 
 	template<typename T = float>
-	static vec<2, T> Vec2FromAngle(T angle, mfg::angleUnit angleType = mfg::Radians)
+	vec<2, T> Vec2FromAngle(T angle, mfg::angleUnit angleType = mfg::Radians)
 	{
 		vec<2, T> result;
 		if (angleType == mfg::Degrees)

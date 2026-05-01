@@ -148,7 +148,7 @@ namespace mfg
 
 		//generic subtraction
 		template<typename type1, typename type2>
-		friend vec operator-(const type1 lhs, const type2 &rhs)
+		friend vec operator-(type1 lhs, const type2 &rhs)
 		{
 			lhs -= rhs;
 			return lhs;
@@ -296,14 +296,14 @@ namespace mfg
 
 
 		//get the sqr distance from this vector to another vector
-		T SqrDistance(const vec<dim, T>& other)
+		T SqrDistance(const vec<dim, T>& other) const
 		{
 			vec<dim, T> res = *this - other;
 			return res.SqrMagnitude();
 		}
 
 		//get the distance from this vector to another vector
-		T Distance(const vec<dim, T>& other)
+		T Distance(const vec<dim, T>& other) const
 		{
 			return std::sqrt(*this->SqrDistance());
 		}

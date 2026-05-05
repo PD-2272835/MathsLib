@@ -215,7 +215,7 @@ namespace mfg
 	//https://stackoverflow.com/questions/8115352/glmperspective-explanation
 	//Create a Perspective Matrix
 	template<typename T>
-	static mat<4, 4, T> Perspective(T viewAngle, T aspectRatio, T nearClip, T farClip)
+	static mat<4, 4, T> GLPerspective(T viewAngle, T aspectRatio, T nearClip, T farClip)
 	{
 		mat<4, 4, T> r;
 		T tanHalfAngle = std::tan(viewAngle / 2);
@@ -228,6 +228,21 @@ namespace mfg
 		return r;
 	}
 
+	template<typename T>
+	static mat<4, 4, T> Perspective(T viewAngle, T aspectRatio, T nearClip, T farClip)
+	{
+		mat<4, 4, T> r;
+		T tanHalfAngle = std::tan(viewAngle / 2);
+		T scaleFactor = 1 / tanHalfAngle;
+
+		r[0] = scaleFactor; //scale X to range
+		r[5] = scaleFactor; //scale Y to range
+		r[10] = -farClip / (farClip - nearClip);  //remap z to 0,1
+		r[11] = -(nearClip * farClip) / (farClip - nearClip); //remap z to 0,1
+		r[14] = -1; //w = -z
+
+		return r;
+	}
 
 
 	template<std::size_t col, std::size_t row> using highp_mat = mat<col, row, long double>;

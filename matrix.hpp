@@ -52,14 +52,17 @@ namespace mfg
 			}
 		}
 
-		//allow this type to be read as continuous memory
+		//allow this type to be read as contiguous memory
 		T& operator[](std::size_t index)
 		{
-			if (index < 0 || index > (rows * columns)-1)
-			{
-				return this->values[0];
-			}
-			return this->values[index];
+			if (index < 0) return this->values[0];
+			return this->values[index % (rows * columns)]; //prevent out of range access and just wrap around
+		}
+		//const variant
+		T operator[](std::size_t index) const
+		{
+			if (index < 0) return this->values[0];
+			return this->values[index % (rows * columns)];
 		}
 
 		//functor for accessing the matrix values by index (row then column)
@@ -75,7 +78,7 @@ namespace mfg
 		}
 
 
-
+		
 		
 
 		//combining matrices through multiplication
@@ -83,23 +86,9 @@ namespace mfg
 		//this is a const method as matrix multiplication can produce a resulting matrix of a different size
 		template<std::size_t C, typename type,
 			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
-		mat<rows, C, T> operator*(const mat<columns, C, type> &rhs)
+		mat<rows, C, T>& operator*(const mat<columns, C, type> &rhs)
 		{
-			mat<rows, C, T> result;
-			
-			for (std::size_t i = 0; i < rows; ++i)
-			{
-				for (std::size_t j = 0; j < C; ++j)
-				{
-					T sum = T(0);
-					for (std::size_t k = 0; k < columns; ++k)
-					{
-						sum += (*this)(i, k) * rhs(k, j);
-					}
-					result(i, j) = sum;
-				}
-			}
-			return result;
+			return *this;
 		}
 
 
@@ -112,21 +101,22 @@ namespace mfg
 
 	};
 
-	template<std::size_t R, std::size_t C, typename T>
-	static mat<R, C, T> mul(mat<R, C, T> &lhs, mat<R, C, T> &rhs)
+	//https://en.wikipedia.org/wiki/Matrix_multiplication
+	template<std::size_t M, std::size_t N, std::size_t P, typename T>
+	static mat<M, P, T> mul(const mat<M, N, T>& a, const mat<N, P, T>& b)
 	{
-		mat<R, C, T> result;
+		mat<M, P, T> result;
 
-		for (std::size_t i = 0; i < R; ++i)
+		for (std::size_t i = 0; i < M; ++i)
 		{
-			for (std::size_t j = 0; j < C; ++j)
+			for (std::size_t j = 0; j < P; ++j)
 			{
-				T sum = T(0);
-				for (std::size_t k = 0; k < C; ++k)
+				T sum(0);
+				for (std::size_t k = 0; k < N; ++k)
 				{
-					sum += T(lhs[(j * R) + i]) * T(rhs[(k * R) + i]);
+					sum += a[i + k * M] * b[k + j * M];
 				}
-				result(i, j) = sum;
+				result[i + j * M] = sum;
 			}
 		}
 		return result;
@@ -134,12 +124,13 @@ namespace mfg
 
 	//Pack a Translation Matrix
 	template <typename T>
-	mat<4, 4, T> Translate(const vec<3, T> &vector)
+	mat<4, 4, T> Translate(const vec<3, T> &v)
 	{
+		//matrices are column major
 		mat<4, 4, T> r(1.f);
-		r[12] = vector[0];
-		r[13] = vector[1];
-		r[14] = vector[2];
+		r[12] = v[0];
+		r[13] = v[1];
+		r[14] = v[2];
 		return r;
 	}
 
@@ -227,7 +218,8 @@ namespace mfg
 		r[14] = -1;
 		return r;
 	}
-
+	
+	//DX12-style projection matrix
 	template<typename T>
 	static mat<4, 4, T> Perspective(T viewAngle, T aspectRatio, T nearClip, T farClip)
 	{
@@ -238,11 +230,13 @@ namespace mfg
 		r[0] = scaleFactor; //scale X to range
 		r[5] = scaleFactor; //scale Y to range
 		r[10] = -farClip / (farClip - nearClip);  //remap z to 0,1
-		r[11] = -(nearClip * farClip) / (farClip - nearClip); //remap z to 0,1
-		r[14] = -1; //w = -z
+		r[14] = -(nearClip * farClip) / (farClip - nearClip); //remap z to 0,1
+		r[11] = 1; //w = z
 
 		return r;
 	}
+
+
 
 
 	template<std::size_t col, std::size_t row> using highp_mat = mat<col, row, long double>;

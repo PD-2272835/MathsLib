@@ -176,9 +176,9 @@ namespace mfg
 		return r;
 	}
 
-	//Create A View Matrix
+	//Create a wierd matrix thing
 	template<typename T>
-	static mat<4, 4, T> View(const vec<3,T> &right, const vec<3,T> &up, const vec<3,T> &front, const vec<3,T> &position = {0.f, 0.f, 0.f})
+	static mat<4, 4, T> ColPack(const vec<3,T> &right, const vec<3,T> &up, const vec<3,T> &front, const vec<3,T> &position = {0.f, 0.f, 0.f})
 	{
 		mat<4, 4, T> r;
 
@@ -203,8 +203,38 @@ namespace mfg
 	}
 
 
+	//construct a right-handed view matrix
+	template<typename T>
+	static mat<4, 4, T> View(const vec<3, T>& right, const vec<3, T>& up, const vec<3, T>& front, const vec<3, T>& position = { 0.f, 0.f, 0.f })
+	{
+		mat<4, 4, T> r;
+		//pack orientation from 
+		r[0] = right[0];
+		r[1] = right[1];
+		r[2] = right[2];
+
+		r[4] = up[0];
+		r[5] = up[1];
+		r[6] = up[2];
+
+		r[8] = front[0];
+		r[9] = front[1];
+		r[10] = front[2];
+		
+		//encode the eye position (prevents needing to multiply a translation and rotation matrix together)
+		//https://www.3dgep.com/understanding-the-view-matrix/
+		r[12] = -Dot(right, position);
+		r[13] = -Dot(up, position);
+		r[14] = -Dot(front, position);
+
+		r[15] = 1.f;
+		return r;
+	}
+
+
+
 	//https://stackoverflow.com/questions/8115352/glmperspective-explanation
-	//Create a Perspective Matrix
+	//Create a Right-handed OpenGL compatible Perspective Matrix
 	template<typename T>
 	static mat<4, 4, T> GLPerspective(T viewAngle, T aspectRatio, T nearClip, T farClip)
 	{
@@ -219,7 +249,7 @@ namespace mfg
 		return r;
 	}
 	
-	//DX12-style projection matrix
+	//DX12-style Left-handed projection matrix
 	template<typename T>
 	static mat<4, 4, T> Perspective(T viewAngle, T aspectRatio, T nearClip, T farClip)
 	{

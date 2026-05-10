@@ -249,7 +249,7 @@ namespace mfg
 		return r;
 	}
 	
-	//DX12-style Left-handed projection matrix
+	//DX12-style Right-handed projection matrix
 	template<typename T>
 	static mat<4, 4, T> Perspective(T viewAngle, T aspectRatio, T nearClip, T farClip)
 	{
@@ -261,7 +261,7 @@ namespace mfg
 		r[5] = scaleFactor; //scale Y to range
 		r[10] = -farClip / (farClip - nearClip);  //remap z to 0,1
 		r[14] = -(nearClip * farClip) / (farClip - nearClip); //remap z to 0,1
-		r[11] = 1; //w = z
+		r[11] = -1; //w = z
 
 		return r;
 	}

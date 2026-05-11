@@ -6,7 +6,6 @@
 namespace mfg
 {
 
-
 	template<typename T>
 	struct iquat
 	{
@@ -24,7 +23,7 @@ namespace mfg
 		T& w() { return (*this)[3]; }
 		T& w() const { return (*this)[3]; }
 
-		vec3 v() { return vec3(values[0], values[1], values[2]); }
+		vec3 v() { return vec3(values[0], values[1], values[2]); } //get the vector components of this quaternion
 
 
 		//default is Identity quat
@@ -63,9 +62,9 @@ namespace mfg
 			T sinAngle = std::sin(angle);
 
 			//slightly more efficient than loop for vector scalar mul
-			values[0] = axis * sinAngle;
-			values[1] = axis * sinAngle;
-			values[2] = axis * sinAngle;
+			values[0] = axis.values[0] * sinAngle;
+			values[1] = axis.values[1] * sinAngle;
+			values[2] = axis.values[2] * sinAngle;
 
 			values[3] = std::cos(angle);
 		}
@@ -125,6 +124,52 @@ namespace mfg
 			return *this;
 		}
 
+		//rotate vector by quaternion
+		vec3 operator*(const vec3& vec)
+		{
+			iquat<T> k(vec, 0);
+
+			vec3 pPrime = ((*this) * k * (*this).Inverse()).v();
+			return pPrime;
+		}
+
+
+		T GetAngle()
+		{
+			return std::acos((*this).w()) * 2;
+		}
+
+		vec3 GetAxis()
+		{
+			return ((*this).v() / std::sin(std::acos((*this).w())));
+		}
+
+		
+		//convert a quaternion into a rotation matrix
+		//https://automaticaddison.com/how-to-convert-a-quaternion-to-a-rotation-matrix/
+		mat4 ToMatrix()
+		{
+			mat4 res();
+			T q0 = (*this).x();
+			T q1 = (*this).y();
+			T q2 = (*this).z();
+			T q3 = (*this).w();
+
+			res[0] = 2 * (q0 * q0 + q1 * q1) - 1;
+			res[1] = 2 * (q1 * q2 + q0 * q3);
+			res[2] = 2 * (q1 * q3 - q0 * q2);
+
+			res[4] = 2 * (q1 * q2 - q0 * q3);
+			res[5] = 2 * (q0 * q0 + q2 * q2) - 1;
+			res[6] = 2 * (q2 * q3 + q0 * q1);
+
+			res[8] = 2 * (q1 * q3 + q0 * q2);
+			res[9] = 2 * (q2 * q3 - q0 * q1);
+			res[10] = 2 * (q0 * q0 + q3 * q3) - 1;
+			
+			res[15] = T(1);
+			return res();
+		}
 
 	};
 

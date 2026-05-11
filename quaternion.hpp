@@ -8,7 +8,7 @@ namespace mfg
 
 
 	template<typename T>
-	struct quat
+	struct iquat
 	{
 		T values[4];
 
@@ -24,9 +24,11 @@ namespace mfg
 		T& w() { return (*this)[3]; }
 		T& w() const { return (*this)[3]; }
 
+		vec3 v() { return vec3(values[0], values[1], values[2]); }
 
-		//default is unit quat
-		quat()
+
+		//default is Identity quat
+		iquat()
 		{
 			values[0] = T(0);
 			values[1] = T(0);
@@ -35,13 +37,25 @@ namespace mfg
 			values[3] = T(1);
 		}
 
-		quat(const quat<T>& other)
+		//permit a explicit identity quat
+		static iquat<T> Identity()
 		{
-			if(&other != this) std::copy(other.values[0], other.values[3], values);
+			return iquat<T>();
+		}
+
+		iquat(const iquat<T>& other)
+		{
+			if (&other != this)
+			{
+				values[0] = other.values[0];
+				values[1] = other.values[1];
+				values[2] = other.values[2];
+				values[3] = other.values[3];
+			}
 		}
 		
 		//create quat from angle-axis
-		quat(const mfg::vec<3, T>& axis, T angle, angleUnit angleType = Radians)
+		iquat(const mfg::vec<3, T>& axis, T angle, angleUnit angleType = Radians)
 		{
 			if (angleType != Radians) angle = ToRadians(angle);
 
@@ -70,32 +84,57 @@ namespace mfg
 		}
 
 
-
-		quat& operator=(quat<T>& other)
+		//same as copy constructor
+		iquat& operator=(iquat<T>& other)
 		{
-			if (&other != this) std::copy(other.values[0], other.values[3], values);
+			if (&other != this)
+			{
+				values[0] = other.values[0];
+				values[1] = other.values[1];
+				values[2] = other.values[2];
+				values[3] = other.values[3];
+			}
 			return *this;
 		}
 
 		//inverse this quat
-		quat& Inverse()
+		iquat& Inverse()
 		{
 			values[0] *= -1;
 			values[1] *= -1;
 			values[2] *= -1;
+			return *this;
 		}
 
 		//return an inverse of this quat
-		quat& Inverse() const
+		iquat Inverse() const
 		{
-			quat<T> r = *this;
+			iquat<T> r = *this;
 			return r.Inverse();
 		}
+
+		//quaternion-quaternion rotation
+		iquat& operator*(iquat<T>& s)
+		{
+			values[3] = (s.values[3] * values[3]) - Dot(s.v(), (*this).v());
+			vec<3, T> v(s.values[3] * (*this).v() + values[3] * s.v() + Cross((*this).v(), s.v()));
+			
+			values[0] = v.values[0];
+			values[1] = v.values[1];
+			values[2] = v.values[2];
+			return *this;
+		}
+
 
 	};
 
 
+	//convert internal quat to different precision definitions
+	using highp_quat = iquat<long double>;
+	using medp_quat = iquat<double>;
+	using lowp_quat = iquat<float>;
 
-	using quaternion = quat<float>;
+	//define standard quat
+	using quat = lowp_quat;
 }
 #endif

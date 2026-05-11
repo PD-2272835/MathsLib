@@ -4,6 +4,7 @@
 #include "constants.hpp"
 #include "vec.hpp"
 #include "matrix.hpp"
+#include "quaternion.hpp"
 #include <string>
 
 namespace mfg
@@ -55,6 +56,19 @@ namespace mfg
 			line += ")\n";
 			res += line;
 		}
+		return res;
+	}
+
+	//convert a quaternion to a formatted string
+	template<typename T>
+	static std::string QuatToString(const mfg::iquat<T>& quat)
+	{
+		std::string res = "(";
+		//quats can only have 4 elements, no need to loop
+		res += std::to_string(quat.values[0]) + ", ";
+		res += std::to_string(quat.values[1]) + ", ";
+		res += std::to_string(quat.values[2]) + ", ";
+		res += std::to_string(quat.values[3]) + ")";
 		return res;
 	}
 

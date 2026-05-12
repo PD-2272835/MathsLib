@@ -5,7 +5,7 @@
 
 namespace mfg
 {
-
+	//last component of values is the angle
 	template<typename T>
 	struct iquat
 	{
@@ -58,13 +58,15 @@ namespace mfg
 		{
 			if (angleType != Radians) angle = ToRadians(angle);
 
+			mfg::vec3 nAxis = mfg::Normalize(axis);
+
 			angle = angle / 2; //use half angle
 			T sinAngle = std::sin(angle);
 
 			//slightly more efficient than loop for vector scalar mul
-			values[0] = axis.values[0] * sinAngle;
-			values[1] = axis.values[1] * sinAngle;
-			values[2] = axis.values[2] * sinAngle;
+			values[1] = nAxis.values[1] * sinAngle;
+			values[2] = nAxis.values[2] * sinAngle;
+			values[0] = nAxis.values[0] * sinAngle;
 
 			values[3] = std::cos(angle);
 		}
@@ -115,14 +117,15 @@ namespace mfg
 		//quaternion-quaternion rotation
 		iquat& operator*(iquat<T>& s)
 		{
-			values[3] = (s.values[3] * values[3]) - Dot(s.v(), (*this).v());
 			vec<3, T> v(s.values[3] * (*this).v() + values[3] * s.v() + Cross((*this).v(), s.v()));
+			values[3] = (s.values[3] * values[3]) - Dot(s.v(), (*this).v());
 			
 			values[0] = v.values[0];
 			values[1] = v.values[1];
 			values[2] = v.values[2];
 			return *this;
 		}
+
 
 		//rotate vector by quaternion
 		vec3 operator*(const vec3& vec)
@@ -145,30 +148,42 @@ namespace mfg
 		}
 
 		
-		//convert a quaternion into a rotation matrix
+		//convert a quaternion into a rotation matrix by encoding qpq-1
 		//https://automaticaddison.com/how-to-convert-a-quaternion-to-a-rotation-matrix/
-		mat4 ToMatrix()
+		//https://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm
+		mat4 ToMatrix() const
 		{
-			mat4 res();
-			T q0 = (*this).x();
-			T q1 = (*this).y();
-			T q2 = (*this).z();
-			T q3 = (*this).w();
+			mat4 res = mat4();
+			T q0 = values[0];
+			T q1 = values[1];
+			T q2 = values[2];
+			T q3 = values[3];
 
-			res[0] = 2 * (q0 * q0 + q1 * q1) - 1;
-			res[1] = 2 * (q1 * q2 + q0 * q3);
-			res[2] = 2 * (q1 * q3 - q0 * q2);
+			res.values[0] = 1 - (2*(q0 * q0 + q1 * q1));
+			res.values[1] = 2 * (q1 * q2 + q0 * q3);
+			res.values[2] = 2 * (q1 * q3 - q0 * q2);
 
-			res[4] = 2 * (q1 * q2 - q0 * q3);
-			res[5] = 2 * (q0 * q0 + q2 * q2) - 1;
-			res[6] = 2 * (q2 * q3 + q0 * q1);
+			res.values[4] = 2 * (q1 * q2 - q0 * q3);
+			res.values[5] = 1 - (2 * (q0 * q0 + q2 * q2));
+			res.values[6] = 2 * (q2 * q3 + q0 * q1);
 
-			res[8] = 2 * (q1 * q3 + q0 * q2);
-			res[9] = 2 * (q2 * q3 - q0 * q1);
-			res[10] = 2 * (q0 * q0 + q3 * q3) - 1;
+			res.values[8] = 2 * (q1 * q3 + q0 * q2);
+			res.values[9] = 2 * (q2 * q3 - q0 * q1);
+			res.values[10] = (2 * (q0 * q0 + q3 * q3)) - 1;
 			
-			res[15] = T(1);
-			return res();
+			res.values[15] = T(1);
+			return res;
+		}
+
+		T Magnitude() const
+		{
+			T sum(0); 
+			sum += values[0] * values[0];
+			sum += values[1] * values[1];
+			sum += values[2] * values[2];
+			sum += values[3] * values[3];
+
+			return std::sqrt(sum);
 		}
 
 	};
@@ -181,5 +196,6 @@ namespace mfg
 
 	//define standard quat
 	using quat = lowp_quat;
-}
+};
+
 #endif

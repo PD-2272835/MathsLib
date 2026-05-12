@@ -260,20 +260,6 @@ namespace mfg
 		}
 
 
-
-
-		//get the magnitude of this vector
-		T Magnitude() const
-		{
-			T result = T();
-			for (std::size_t i = 0; i < dim; ++i)
-			{
-				result += values[i] * values[i];
-			}
-			result = std::sqrt(result); //could replace this with a custom sqrt function...perchance...?
-			return result;
-		}
-
 		//get the square magnitude of this vector
 		T SqrMagnitude() const
 		{
@@ -285,20 +271,17 @@ namespace mfg
 			return result;
 		}
 
-
-		//Normalize this vector
-		vec& Normalize()
+		//get the magnitude of this vector
+		T Magnitude() const
 		{
-			T mag = this->Magnitude();
-			*this = *this / mag;
-			return *this;
+			return std::sqrt((*this).SqrMagnitude());
 		}
 
 
 		//get the sqr distance from this vector to another vector
 		T SqrDistance(const vec<dim, T>& other) const
 		{
-			vec<dim, T> res = *this - other;
+			vec<dim, T> res = other - *this;
 			return res.SqrMagnitude();
 		}
 
@@ -308,6 +291,14 @@ namespace mfg
 			return std::sqrt(*this->SqrDistance());
 		}
 
+
+		//Normalize this vector
+		vec& Normalize()
+		{
+			T mag = this->Magnitude();
+			*this = *this / mag;
+			return *this;
+		}
 	};
 
 	//static wrapper function for magnitude
@@ -349,11 +340,10 @@ namespace mfg
 	}
 
 	
-
 	template<std::size_t dim, typename T>
 	T Distance(const vec<dim, T>& a, const vec<dim, T>& b)
 	{
-		T result = mfg::Magnitude(a - b);
+		T result = mfg::Magnitude(b - a);
 		return result;
 	}
 

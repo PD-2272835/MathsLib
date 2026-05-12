@@ -23,7 +23,7 @@ namespace mfg
 		T& w() { return (*this)[3]; }
 		T& w() const { return (*this)[3]; }
 
-		vec3 v() { return vec3(values[0], values[1], values[2]); } //get the vector components of this quaternion
+		constexpr vec3 v() { return vec3(values[0], values[1], values[2]); } //get the vector components of this quaternion
 
 
 		//default is Identity quat
@@ -84,7 +84,7 @@ namespace mfg
 
 
 		//same as copy constructor
-		iquat& operator=(iquat<T>& other)
+		iquat& operator=(const iquat<T>& other)
 		{
 			if (&other != this)
 			{

@@ -23,7 +23,7 @@ namespace mfg
 		T& w() { return (*this)[3]; }
 		T& w() const { return (*this)[3]; }
 
-		constexpr vec3 v() { return vec3(values[0], values[1], values[2]); } //get the vector components of this quaternion
+		constexpr vec3 v() const { return vec3(values[0], values[1], values[2]); } //get the vector components of this quaternion
 
 
 		//default is Identity quat
@@ -147,8 +147,25 @@ namespace mfg
 			return ((*this).v() / std::sin(std::acos((*this).w())));
 		}
 
+		T GetAngle() const
+		{
+			return std::acos((*this).w()) * 2;
+		}
+
+		vec3 GetAxis() const
+		{
+			mfg::vec3 res((*this).v());
+			res /= std::sin(std::acos((*this).w()));
+			return res;
+		}
+
+		//return rotation matrix from axis angle using arbitrary rotation matrix
+		mat4 ToMat()
+		{
+			return mfg::Rotate((*this).GetAngle(), (*this).GetAxis());
+		}
 		
-		//convert a quaternion into a rotation matrix by encoding qpq-1
+		//attempt at converting a quaternion into a rotation matrix by encoding qpq-1 into matrix
 		//https://automaticaddison.com/how-to-convert-a-quaternion-to-a-rotation-matrix/
 		//https://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm
 		mat4 ToMatrix() const
@@ -159,12 +176,12 @@ namespace mfg
 			T q2 = values[2];
 			T q3 = values[3];
 
-			res.values[0] = 1 - (2*(q0 * q0 + q1 * q1));
+			res.values[0] = (2*(q0 * q0 + q1 * q1)) - 1;
 			res.values[1] = 2 * (q1 * q2 + q0 * q3);
 			res.values[2] = 2 * (q1 * q3 - q0 * q2);
 
 			res.values[4] = 2 * (q1 * q2 - q0 * q3);
-			res.values[5] = 1 - (2 * (q0 * q0 + q2 * q2));
+			res.values[5] = (2 * (q0 * q0 + q2 * q2)) - 1;
 			res.values[6] = 2 * (q2 * q3 + q0 * q1);
 
 			res.values[8] = 2 * (q1 * q3 + q0 * q2);
@@ -174,6 +191,7 @@ namespace mfg
 			res.values[15] = T(1);
 			return res;
 		}
+
 
 		T Magnitude() const
 		{

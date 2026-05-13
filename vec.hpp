@@ -9,6 +9,8 @@
 //mfg should probably be renamed to something else (three letter abreviation) but for this module it should be fine
 namespace mfg
 {
+	template<std::size_t R, std::size_t C, typename T> struct mat;
+
 	template<std::size_t dim, typename T>
 	struct vec {
 
@@ -219,7 +221,7 @@ namespace mfg
 		//matrix is the lefthand symbol to preserve the order of matrix multiplication
 		template<typename type, std::size_t C,
 			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
-		friend vec operator*( mat<dim, C, type> &lhs, const vec<dim, T> &rhs)
+		friend vec operator*(mat<dim, C, type> &lhs, const vec<dim, T> &rhs)
 		{
 			vec<dim, T> result;
 			for (std::size_t i = 0; i < dim; ++i)

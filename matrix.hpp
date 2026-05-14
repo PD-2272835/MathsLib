@@ -52,6 +52,7 @@ namespace mfg
 			}
 		}
 
+
 		//allow this type to be read as contiguous memory
 		T& operator[](std::size_t index)
 		{
@@ -78,15 +79,12 @@ namespace mfg
 		}
 
 
-		
-		
-
 		//combining matrices through multiplication
 		//iterative algorithm: https://en.wikipedia.org/wiki/Matrix_multiplication_algorithm
 		//this is a const method as matrix multiplication can produce a resulting matrix of a different size
 		template<std::size_t C, typename type,
 			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
-		mat<rows, C, T>& operator*(const mat<columns, C, type> &rhs)
+		mat<rows, C, T>& operator*(const mat<columns, C, type> &rhs) const
 		{
 			return *this;
 		}
@@ -101,6 +99,7 @@ namespace mfg
 
 	};
 
+	//combine matrices
 	//https://en.wikipedia.org/wiki/Matrix_multiplication
 	template<std::size_t M, std::size_t N, std::size_t P, typename T>
 	static mat<M, P, T> mul(const mat<M, N, T>& a, const mat<N, P, T>& b)
@@ -176,7 +175,7 @@ namespace mfg
 		return r;
 	}
 
-	//Create a wierd matrix thing
+	//Create an affine matrix
 	template<typename T>
 	static mat<4, 4, T> ColPack(const vec<3,T> &right, const vec<3,T> &up, const vec<3,T> &front, const vec<3,T> &position = {0.f, 0.f, 0.f})
 	{
@@ -244,8 +243,8 @@ namespace mfg
 		r[0] = 1 / (aspectRatio * tanHalfAngle);
 		r[5] = 1 / tanHalfAngle;
 		r[10] = -(farClip + nearClip) / (farClip - nearClip);
-		r[11] = -(2 * farClip * nearClip) / (farClip - nearClip);
-		r[14] = -1;
+		r[11] = -1;
+		r[14] = -(2 * farClip * nearClip) / (farClip - nearClip);
 		return r;
 	}
 	

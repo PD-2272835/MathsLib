@@ -207,7 +207,7 @@ namespace mfg
 	static mat<4, 4, T> View(const vec<3, T>& right, const vec<3, T>& up, const vec<3, T>& front, const vec<3, T>& position = { 0.f, 0.f, 0.f })
 	{
 		mat<4, 4, T> r;
-		//pack orientation from 
+		//pack orientation from right up front 
 		r[0] = right[0];
 		r[1] = right[1];
 		r[2] = right[2];
@@ -222,9 +222,9 @@ namespace mfg
 		
 		//encode the eye position (prevents needing to multiply a translation and rotation matrix together)
 		//https://www.3dgep.com/understanding-the-view-matrix/
-		r[12] = -Dot(right, position);
-		r[13] = -Dot(up, position);
-		r[14] = -Dot(front, position);
+		r[12] = Dot(right, position);
+		r[13] = Dot(up, position);
+		r[14] = Dot(front, position);
 
 		r[15] = 1.f;
 		return r;

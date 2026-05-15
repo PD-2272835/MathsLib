@@ -176,17 +176,17 @@ namespace mfg
 			T q2 = values[2];
 			T q3 = values[3];
 
-			res.values[0] = (2*(q0 * q0 + q1 * q1)) - 1;
+			res.values[0] = 1 - (2*(q0 * q0 + q1 * q1));
 			res.values[1] = 2 * (q1 * q2 + q0 * q3);
 			res.values[2] = 2 * (q1 * q3 - q0 * q2);
 
 			res.values[4] = 2 * (q1 * q2 - q0 * q3);
-			res.values[5] = (2 * (q0 * q0 + q2 * q2)) - 1;
+			res.values[5] = 1 - (2 * (q0 * q0 + q2 * q2));
 			res.values[6] = 2 * (q2 * q3 + q0 * q1);
 
 			res.values[8] = 2 * (q1 * q3 + q0 * q2);
 			res.values[9] = 2 * (q2 * q3 - q0 * q1);
-			res.values[10] = (2 * (q0 * q0 + q3 * q3)) - 1;
+			res.values[10] = 1 - (2 * (q0 * q0 + q3 * q3));
 			
 			res.values[15] = T(1);
 			return res;

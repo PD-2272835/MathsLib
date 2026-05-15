@@ -231,7 +231,6 @@ namespace mfg
 	}
 
 
-
 	//https://stackoverflow.com/questions/8115352/glmperspective-explanation
 	//Create a Right-handed OpenGL compatible Perspective Matrix
 	template<typename T>
@@ -259,8 +258,8 @@ namespace mfg
 		r[0] = scaleFactor; //scale X to range
 		r[5] = scaleFactor; //scale Y to range
 		r[10] = -farClip / (farClip - nearClip);  //remap z to 0,1
-		r[14] = -(nearClip * farClip) / (farClip - nearClip); //remap z to 0,1
-		r[11] = -1; //w = z
+		r[14] = -(nearClip * farClip) / (farClip - nearClip); //	remap z to 0,1
+		r[11] = -1; //w = z order (we look down -z)
 
 		return r;
 	}

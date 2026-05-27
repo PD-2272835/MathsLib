@@ -7,7 +7,7 @@
 #include "quaternion.hpp"
 #include <string>
 
-namespace mfg
+namespace sgm
 {
 	//clamp between values (default 0 to 1)
 	template<typename T>
@@ -26,7 +26,7 @@ namespace mfg
 
 	//convert a vector to a formatted string
 	template<std::size_t dim, typename T>
-	static std::string VecToString(const mfg::vec<dim, T>& vector)
+	static std::string VecToString(const sgm::vec<dim, T>& vector)
 	{
 		std::string res = "(";
 		for (std::size_t i = 0; i < dim; ++i)
@@ -43,7 +43,7 @@ namespace mfg
 
 	//convert a matrix to a formatted string
 	template<std::size_t R, std::size_t C, typename T>
-	static std::string MatToString(const mfg::mat<R, C, T>& matrix)
+	static std::string MatToString(const sgm::mat<R, C, T>& matrix)
 	{
 		std::string res;
 		for (std::size_t i = 0; i < R; ++i)
@@ -61,7 +61,7 @@ namespace mfg
 
 	//convert a quaternion to a formatted string
 	template<typename T>
-	static std::string QuatToString(const mfg::iquat<T>& quat)
+	static std::string QuatToString(const sgm::iquat<T>& quat)
 	{
 		std::string res = "(";
 		//quats can only have 4 elements, no need to loop

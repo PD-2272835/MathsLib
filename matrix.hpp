@@ -5,7 +5,7 @@
 #include "vec.hpp"
 
 
-namespace mfg
+namespace sgm
 {
 	//forward declare vector
 	template<std::size_t dim, typename T> struct vec;

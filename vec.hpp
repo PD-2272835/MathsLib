@@ -6,8 +6,8 @@
 #include <cstddef> //allows use of std::size_t
 
 
-//mfg should probably be renamed to something else (three letter abreviation) but for this module it should be fine
-namespace mfg
+//sgm should probably be renamed to something else (three letter abreviation) but for this module it should be fine
+namespace sgm
 {
 	template<std::size_t R, std::size_t C, typename T> struct mat;
 
@@ -314,7 +314,7 @@ namespace mfg
 	template<std::size_t dim, typename T>
 	vec<dim, T> Normalize(const vec<dim, T> &vector)
 	{
-		T mag = mfg::Magnitude(vector);
+		T mag = sgm::Magnitude(vector);
 		vec<dim, T> result = vector / mag;
 		return result;
 	}
@@ -345,7 +345,7 @@ namespace mfg
 	template<std::size_t dim, typename T>
 	T Distance(const vec<dim, T>& a, const vec<dim, T>& b)
 	{
-		T result = mfg::Magnitude(b - a);
+		T result = sgm::Magnitude(b - a);
 		return result;
 	}
 
@@ -374,7 +374,7 @@ namespace mfg
 		vec<dim, T> res;
 		for (std::size_t i = 0; i < dim; ++i)
 		{
-			res[i] = (a[i] > b[i]) ? a[i] : b[i]; //FIXME - should use mfg::Max
+			res[i] = (a[i] > b[i]) ? a[i] : b[i]; //FIXME - should use sgm::Max
 		}
 		return res;
 	}
@@ -389,7 +389,7 @@ namespace mfg
 		vec<dim, T> res;
 		for (std::size_t i = 0; i < dim; ++i)
 		{
-			res[i] = (a[i] < b[i]) ? a[i] : b[i]; //FIXME - should use mfg::Min
+			res[i] = (a[i] < b[i]) ? a[i] : b[i]; //FIXME - should use sgm::Min
 		}
 		return res;
 	}
@@ -399,17 +399,17 @@ namespace mfg
 	template<std::size_t dim, typename T>
 	T AngleBetween(const vec<dim, T>& a, const vec<dim, T>& b)
 	{
-		T angle = std::acos(mfg::Dot(a, b) / (mfg::Magnitude(a) * mfg::Magnitude(b))); //standard arccos - maybe replace?
+		T angle = std::acos(sgm::Dot(a, b) / (sgm::Magnitude(a) * sgm::Magnitude(b))); //standard arccos - maybe replace?
 		return angle;
 	}
 
 	template<typename T = float>
-	vec<2, T> Vec2FromAngle(T angle, mfg::angleUnit angleType = mfg::Radians)
+	vec<2, T> Vec2FromAngle(T angle, sgm::angleUnit angleType = sgm::Radians)
 	{
 		vec<2, T> result;
-		if (angleType == mfg::Degrees)
+		if (angleType == sgm::Degrees)
 		{
-			angle = mfg::ToRadians(angle);
+			angle = sgm::ToRadians(angle);
 		}
 		result[0] = std::cos(angle);
 		result[1] = std::sin(angle);

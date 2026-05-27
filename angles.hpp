@@ -8,7 +8,7 @@
 //they only allow for the precision of a float, when a double can be used as an input argument
 //user may desire higher precision return type
 
-namespace mfg
+namespace sgm
 {
 	enum angleUnit
 	{
@@ -36,12 +36,12 @@ namespace mfg
 	static float AngleConvert(const T &angle, const angleUnit convertTo = Radians)
 	{	
 		float result;
-		if (convertTo == mfg::Radians)
+		if (convertTo == sgm::Radians)
 		{
-			result = mfg::ToRadians(angle);
+			result = sgm::ToRadians(angle);
 		} else
 		{
-			result = mfg::ToDegrees(angle);
+			result = sgm::ToDegrees(angle);
 		}
 		return result;
 	}

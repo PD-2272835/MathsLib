@@ -3,7 +3,7 @@
 #include "angles.hpp"
 #include "vec.hpp"
 
-namespace mfg
+namespace sgm
 {
 	//last component of values is the angle
 	template<typename T>
@@ -54,11 +54,11 @@ namespace mfg
 		}
 		
 		//create quat from angle-axis
-		iquat(const mfg::vec<3, T>& axis, T angle, angleUnit angleType = Radians)
+		iquat(const sgm::vec<3, T>& axis, T angle, angleUnit angleType = Radians)
 		{
 			if (angleType != Radians) angle = ToRadians(angle);
 
-			mfg::vec3 nAxis = mfg::Normalize(axis);
+			sgm::vec3 nAxis = sgm::Normalize(axis);
 
 			angle = angle / 2; //use half angle
 			T sinAngle = std::sin(angle);
@@ -154,7 +154,7 @@ namespace mfg
 
 		vec3 GetAxis() const
 		{
-			mfg::vec3 res((*this).v());
+			sgm::vec3 res((*this).v());
 			res /= std::sin(std::acos((*this).w()));
 			return res;
 		}
@@ -162,7 +162,7 @@ namespace mfg
 		//return rotation matrix from axis angle using arbitrary rotation matrix
 		mat4 ToMat()
 		{
-			return mfg::Rotate((*this).GetAngle(), (*this).GetAxis());
+			return sgm::Rotate((*this).GetAngle(), (*this).GetAxis());
 		}
 		
 		//attempt at converting a quaternion into a rotation matrix by encoding qpq-1 into matrix

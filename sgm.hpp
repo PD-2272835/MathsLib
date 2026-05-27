@@ -1,5 +1,5 @@
-#ifndef _MFG_HPP_
-#define _MFG_HPP_
+#ifndef _SGM_HPP_
+#define _SGM_HPP_
 
 #include "constants.hpp"
 #include "functions.hpp"
@@ -8,7 +8,7 @@
 #include "matrix.hpp"
 #include "quaternion.hpp"
 
-namespace mfg
+namespace sgm
 {
 	//include this header to allow usage of all the above functionality of this MFG library
 }

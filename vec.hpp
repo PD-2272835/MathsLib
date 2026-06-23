@@ -101,9 +101,18 @@ namespace sgm
 			typename = std::enable_if_t<std::is_convertible<type, T>::value>>
 		vec& operator=(const vec<D, type> &other)
 		{
-			for (std::size_t i = 0; i < dim; ++i)
+			if (&other != this)
 			{
-				values[i] = T(other.values[i]);
+				for (std::size_t i = 0; i < dim; ++i)
+				{
+					if (i > D) //this could perhaps be better?
+					{
+						values[i] = static_cast<T>(0); 
+						continue;
+					}
+
+					values[i] = static_cast<T>(other.values[i]);
+				}
 			}
 
 			return *this;
